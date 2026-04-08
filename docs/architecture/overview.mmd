@@ -1,0 +1,17 @@
+graph TD
+    User([User/CLI]) --> |coord| Client[ClearlyDefinedClient]
+    Client --> |GET /definitions/| API[ClearlyDefined API]
+    Client --> |Parse| JSON[nlohmann/json]
+    Client --> |Manage| Async[std::async/Futures]
+    API --> |Response| Client
+    Client --> |Structured JSON| User
+    
+    subgraph Library
+        Client
+        JSON
+        Async
+    end
+    
+    subgraph External
+        API
+    end

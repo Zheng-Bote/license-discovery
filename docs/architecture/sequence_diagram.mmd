@@ -1,0 +1,21 @@
+sequenceDiagram
+    participant CLI as cdclient (CLI)
+    participant C as ClearlyDefinedClient
+    participant I as Impl (Pimpl)
+    participant API as ClearlyDefined API
+
+    CLI->>C: query_single("git/github/curl/curl/7.88.1")
+    C->>I: execute_request(...)
+    I->>I: is_valid_coordinate?
+    alt is valid
+        loop Retries (Max 3)
+            I->>API: GET /definitions/...
+            API-->>I: 200 OK / JSON
+        end
+        I->>I: format_success(raw_json)
+        I-->>C: nlohmann::json (Schema)
+    else is invalid
+        I-->>C: nlohmann::json (Error)
+    end
+    C-->>CLI: nlohmann::json
+    CLI->>CLI: print result

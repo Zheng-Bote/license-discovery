@@ -1,0 +1,21 @@
+graph LR
+    subgraph Users
+        CLI[cdclient CLI]
+        LibUser[External C++ Project]
+    end
+
+    subgraph LicenseDiscoveryLibrary
+        API[ClearlyDefinedClient]
+        Json[nlohmann/json]
+        HTTP[cpr/libcurl]
+    end
+
+    subgraph ExternalServices
+        CD[ClearlyDefined API]
+    end
+
+    CLI --> |uses| API
+    LibUser --> |uses| API
+    API --> |uses| Json
+    API --> |uses| HTTP
+    HTTP --> |requests| CD

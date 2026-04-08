@@ -1,0 +1,38 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install Conan
+      run: |
+        pip install conan
+        conan profile detect --force
+
+    - name: Build and Test
+      run: |
+        conan install . --output-folder=build --build=missing
+        cd build
+        cmake .. -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release
+        cmake --build .
+        ctest --output-on-failure
+
+    - name: SBOM step placeholder
+      run: |
+        echo "Generating SBOM..."
+        # In a real scenario, you might use a tool like syft or cyclone-dx-conan
+        echo '{"sbom": "placeholder"}' > sbom.json

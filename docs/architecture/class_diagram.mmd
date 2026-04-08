@@ -1,0 +1,26 @@
+classDiagram
+    class ClearlyDefinedClient {
+        +ClearlyDefinedClient(string base_url, optional~string~ token, size_t concurrency, RateLimitConfig rl)
+        +~ClearlyDefinedClient()
+        +query_single(string coordinate) json
+        +query_single_async(string coordinate, milliseconds timeout) json
+        +query_batch(vector~string~ coordinates) json
+        +set_retry_policy(RetryPolicy rp)
+        +set_rate_limit(RateLimitConfig rl)
+        +is_valid_coordinate(string_view coordinate) bool$
+    }
+
+    class Impl {
+        -string base_url
+        -optional~string~ github_token
+        -size_t concurrency
+        -RateLimitConfig rate_limit
+        -RetryPolicy retry_policy
+        +execute_request(string coordinate, milliseconds timeout) json
+        +format_success(string coordinate, json raw) json
+        +format_error(string coordinate, int status, string_view code, string_view msg) json
+    }
+
+    ClearlyDefinedClient *-- Impl : Pimpl
+    Impl --> RetryPolicy
+    Impl --> RateLimitConfig
